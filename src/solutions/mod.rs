@@ -1,1 +1,1 @@
-pub mod one;
+pub mod aoc2022;
