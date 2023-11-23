@@ -17,12 +17,6 @@ pub fn file_to_lines(path: &str) -> Vec<String> {
 }
 
 pub fn validate_result(result: u128, expectation: u128, test: &str) {
-    assert!(
-        result == expectation,
-        "Failed {}: {} should be {}",
-        test,
-        result,
-        expectation
-    );
+    assert_eq!(result, expectation, "Failed {}: {} should be {}", test, result, expectation);
     println!("Success {}: {}", test, result);
 }
