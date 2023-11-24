@@ -40,3 +40,16 @@ pub fn test_two_b() {
         12316
     );
 }
+
+#[test]
+pub fn test_three_a() {
+    assert_eq!(
+        aoc2023_rust::solutions::aoc2022::three::solve_a("./inputs/aoc2022/3_test.txt"),
+        157
+    );
+
+    assert_eq!(
+        aoc2023_rust::solutions::aoc2022::three::solve_a("./inputs/aoc2022/3.txt"),
+        8233
+    );
+}
