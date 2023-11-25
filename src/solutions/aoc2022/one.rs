@@ -1,28 +1,28 @@
 use crate::common;
 
-fn find_highest_x(lines: Vec<String>, x: usize) -> u128 {
+fn find_highest_x(lines: Vec<String>, x: usize) -> usize {
     let groups = lines.split(String::is_empty);
 
-    let mut sums: Vec<u128> = groups.map(sum_strings).into_iter().collect();
+    let mut sums: Vec<usize> = groups.map(sum_strings).into_iter().collect();
     sums.sort();
     sums.reverse();
 
     sums.iter().take(x).sum()
 }
 
-fn sum_strings(strings: &[String]) -> u128 {
+fn sum_strings(strings: &[String]) -> usize {
     strings
         .into_iter()
-        .map(|string| string.parse::<u128>().unwrap())
+        .map(|string| string.parse::<usize>().unwrap())
         .sum()
 }
 
-pub fn solve_a(path: &str) -> u128 {
+pub fn solve_a(path: &str) -> usize {
     let lines = common::file_to_lines(path);
     return find_highest_x(lines, 1);
 }
 
-pub fn solve_b(path: &str) -> u128 {
+pub fn solve_b(path: &str) -> usize {
     let lines = common::file_to_lines(path);
     return find_highest_x(lines, 3);
 }

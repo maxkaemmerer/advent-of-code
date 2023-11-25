@@ -1,41 +1,24 @@
 use crate::common::file_to_lines;
 use std::collections::HashSet;
-use std::str::Chars;
 
-trait Unique {
-    fn to_hash_set(self) -> HashSet<char>;
-}
-
-impl<'a> Unique for Chars<'a> {
-    fn to_hash_set(self) -> HashSet<char> {
-        let mut set = HashSet::new();
-        self.for_each(|char| {
-            set.insert(char);
-            ()
-        });
-
-        return set;
-    }
-}
-
-fn to_priority(char: &char) -> u128 {
+fn to_priority(char: &char) -> usize {
     match char.is_uppercase() {
         // we are casting the char to its position in the ascii table and removing the offset to get it started at 1 and 27 respectively
-        true => *char as u128 - 64 + 26,
-        false => *char as u128 - 96,
+        true => *char as usize - 64 + 26,
+        false => *char as usize - 96,
     }
 }
 
-pub fn solve_a(path: &str) -> u128 {
+pub fn solve_a(path: &str) -> usize {
     let lines = file_to_lines(path);
 
-    let duplicates = lines.iter().map(|line| -> u128 {
+    let duplicates = lines.iter().map(|line| -> usize {
         let default = 0;
 
         let (first, second) = line.split_at(line.len() / 2);
 
-        let first_unique = first.chars().to_hash_set();
-        let second_unique = second.chars().to_hash_set();
+        let first_unique: HashSet<char> = first.chars().collect();
+        let second_unique: HashSet<char> = second.chars().collect();
 
         let intersecting_item_types = first_unique.intersection(&second_unique);
 
@@ -51,14 +34,14 @@ pub fn solve_a(path: &str) -> u128 {
     duplicates.sum()
 }
 
-pub fn solve_b(path: &str) -> u128 {
+pub fn solve_b(path: &str) -> usize {
     let lines = file_to_lines(path);
-    let default = 0u128;
+    let default = 0usize;
 
     let group_scores = lines.chunks(3).map(|group| {
         let first_backpack = group[0].chars();
-        let second_backpack = group[1].chars().to_hash_set();
-        let third_backpack = group[2].chars().to_hash_set();
+        let second_backpack: HashSet<char> = group[1].chars().collect();
+        let third_backpack: HashSet<char> = group[2].chars().collect();
 
         let items_in_all_backpacks = first_backpack
             .filter(|char| second_backpack.contains(char) && third_backpack.contains(char));

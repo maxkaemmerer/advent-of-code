@@ -14,8 +14,8 @@ impl<T: Ord> Contains<RangeInclusive<T>> for RangeInclusive<T> {
 
 pub fn solve_with_comparison(
     path: &str,
-    comparison: fn(RangeInclusive<u128>, RangeInclusive<u128>) -> bool,
-) -> u128 {
+    comparison: fn(RangeInclusive<usize>, RangeInclusive<usize>) -> bool,
+) -> usize {
     let lines = common::file_to_lines(path);
 
     lines
@@ -24,8 +24,8 @@ pub fn solve_with_comparison(
             let mut sections = line.split(',').take(2).map(|section| {
                 let mut ends = section.split('-').take(2);
                 if let (Some(start), Some(end)) = (
-                    ends.next().and_then(|c| c.parse::<u128>().ok()),
-                    ends.next().and_then(|c| c.parse::<u128>().ok()),
+                    ends.next().and_then(|c| c.parse::<usize>().ok()),
+                    ends.next().and_then(|c| c.parse::<usize>().ok()),
                 ) {
                     // we use an inclusive range here, otherwise the end is excluded in intersection in part b later
                     return RangeInclusive::new(start, end);
@@ -40,18 +40,18 @@ pub fn solve_with_comparison(
 
             false
         })
-        .count() as u128
+        .count() as usize
 }
 
-pub fn solve_a(path: &str) -> u128 {
+pub fn solve_a(path: &str) -> usize {
     solve_with_comparison(path, |section_a, section_b| {
         section_a.contains_range(&section_b) || section_b.contains_range(&section_a)
     })
 }
-pub fn solve_b(path: &str) -> u128 {
+pub fn solve_b(path: &str) -> usize {
     solve_with_comparison(path, |section_a, section_b| {
-        let set_a: HashSet<u128> = section_a.collect();
-        let set_b: HashSet<u128> = section_b.collect();
+        let set_a: HashSet<usize> = section_a.collect();
+        let set_b: HashSet<usize> = section_b.collect();
 
         let intersection = set_a.intersection(&set_b);
 

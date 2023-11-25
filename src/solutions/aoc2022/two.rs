@@ -5,10 +5,10 @@ use crate::solutions::aoc2022::two::Hand::{Paper, Rock, Scissors};
 use crate::solutions::aoc2022::two::HandResult::{Draw, Loss, Win};
 
 impl Add<HandResult> for Hand {
-    type Output = u128;
+    type Output = usize;
 
     fn add(self, rhs: HandResult) -> Self::Output {
-        self as u128 + rhs as u128
+        self as usize + rhs as usize
     }
 }
 
@@ -41,7 +41,7 @@ fn parse_result(hand: &str) -> Option<HandResult> {
     }
 }
 
-fn compare(hands: (&Hand, &Hand)) -> u128 {
+fn compare(hands: (&Hand, &Hand)) -> usize {
     match hands {
         (Rock, Scissors) => Scissors + Loss,
         (Rock, Paper) => Paper + Win,
@@ -69,7 +69,7 @@ fn decide_hand(opponent_hand: &Hand, needed_result: &HandResult) -> Hand {
     }
 }
 
-pub fn solve_a(path: &str) -> u128 {
+pub fn solve_a(path: &str) -> usize {
     let lines = file_to_lines(path);
 
     lines.iter().fold(0, |acc, line| {
@@ -88,7 +88,7 @@ pub fn solve_a(path: &str) -> u128 {
     })
 }
 
-pub fn solve_b(path: &str) -> u128 {
+pub fn solve_b(path: &str) -> usize {
     let lines = file_to_lines(path);
 
     lines.iter().fold(0, |acc, line| {
