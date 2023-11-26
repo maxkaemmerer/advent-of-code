@@ -1,8 +1,3 @@
-use aoc2023_rust::{
-    self,
-    solutions::aoc2022::five::{solve_a, solve_b},
-};
-
 #[test]
 pub fn test_one_a() {
     assert_eq!(
@@ -98,12 +93,48 @@ pub fn test_four_b() {
 
 #[test]
 pub fn test_five_a() {
-    assert_eq!(solve_a("./inputs/aoc2022/5_test.txt"), String::from("CMZ"));
-    assert_eq!(solve_a("./inputs/aoc2022/5.txt"), String::from("VGBBJCRMN"));
+    assert_eq!(
+        aoc2023_rust::solutions::aoc2022::five::solve_a("./inputs/aoc2022/5_test.txt"),
+        String::from("CMZ")
+    );
+    assert_eq!(
+        aoc2023_rust::solutions::aoc2022::five::solve_a("./inputs/aoc2022/5.txt"),
+        String::from("VGBBJCRMN")
+    );
 }
 
 #[test]
 pub fn test_five_b() {
-    assert_eq!(solve_b("./inputs/aoc2022/5_test.txt"), String::from("MCD"));
-    assert_eq!(solve_b("./inputs/aoc2022/5.txt"), String::from("LBBVJBRMH"));
+    assert_eq!(
+        aoc2023_rust::solutions::aoc2022::five::solve_b("./inputs/aoc2022/5_test.txt"),
+        String::from("MCD")
+    );
+    assert_eq!(
+        aoc2023_rust::solutions::aoc2022::five::solve_b("./inputs/aoc2022/5.txt"),
+        String::from("LBBVJBRMH")
+    );
+}
+
+#[test]
+pub fn test_six_a() {
+    assert_eq!(
+        aoc2023_rust::solutions::aoc2022::six::solve_a("./inputs/aoc2022/6_test.txt"),
+        7
+    );
+    assert_eq!(
+        aoc2023_rust::solutions::aoc2022::six::solve_a("./inputs/aoc2022/6.txt"),
+        1655
+    );
+}
+
+#[test]
+pub fn test_six_b() {
+    assert_eq!(
+        aoc2023_rust::solutions::aoc2022::six::solve_b("./inputs/aoc2022/6_test.txt"),
+        19
+    );
+    assert_eq!(
+        aoc2023_rust::solutions::aoc2022::six::solve_b("./inputs/aoc2022/6.txt"),
+        2665
+    );
 }
