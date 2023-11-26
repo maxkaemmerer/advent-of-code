@@ -109,8 +109,7 @@ fn take_x_cargo(
     preserve_stacking_order: bool,
 ) -> Vec<char> {
     let mut removed_cargo: Vec<char> = (0..amount)
-        .map(|index| {
-            println!("{:?} {index}", layout[stack]);
+        .map(|_| {
             layout[stack]
                 .pop()
                 .expect("malformed input, tried to move nonexistent cargo")
@@ -124,21 +123,19 @@ fn take_x_cargo(
     removed_cargo
 }
 
-fn place_cargo(layout: &mut Layout, stack: usize, cargo: Vec<char>) {
-    cargo.iter().for_each(|piece_of_cargo| {
-        layout[stack].push(piece_of_cargo.clone());
-    });
+fn place_cargo(layout: &mut Layout, stack: usize, cargo: &mut Vec<char>) {
+    layout[stack].append(cargo);
 }
 
 fn move_cargo(layout: &mut Layout, cargo_move: &CargoMove, preserve_stacking_order: bool) {
     println!("Move {:?}", cargo_move);
-    let taken_cargo = take_x_cargo(
+    let mut taken_cargo = take_x_cargo(
         layout,
         cargo_move.source,
         cargo_move.amount,
         preserve_stacking_order,
     );
-    place_cargo(layout, cargo_move.target, taken_cargo);
+    place_cargo(layout, cargo_move.target, &mut taken_cargo);
 
     print_layout(layout);
 }
