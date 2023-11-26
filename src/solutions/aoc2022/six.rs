@@ -2,8 +2,8 @@ use std::collections::HashSet;
 
 use crate::common::file_to_lines;
 
-fn solve_with_x_distinct(path: &str, distrinct_chars: usize) -> usize {
-    let skip = distrinct_chars - 1;
+fn solve_with_x_distinct(path: &str, distinct_chars: usize) -> usize {
+    let skip = distinct_chars - 1;
     let lines: Vec<String> = file_to_lines(path);
 
     if let Some(data) = lines.iter().next() {
@@ -17,10 +17,10 @@ fn solve_with_x_distinct(path: &str, distrinct_chars: usize) -> usize {
                 let set: HashSet<&char> = indexable_data
                     .iter()
                     .skip(index - skip)
-                    .take(distrinct_chars)
+                    .take(distinct_chars)
                     .collect();
                 println!("{:?}", set);
-                (set.len() == distrinct_chars, index)
+                (set.len() == distinct_chars, index)
             })
             .filter(|(result, _)| *result)
             .next()
