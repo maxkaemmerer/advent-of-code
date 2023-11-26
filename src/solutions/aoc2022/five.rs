@@ -1,5 +1,3 @@
-use std::fmt::{self, Display};
-
 use crate::common::file_to_lines;
 
 type Layout = Vec<Vec<char>>;
