@@ -1,4 +1,7 @@
-use aoc2023_rust::{self, solutions::aoc2022::five::solve_a};
+use aoc2023_rust::{
+    self,
+    solutions::aoc2022::five::{solve_a, solve_b},
+};
 
 #[test]
 pub fn test_one_a() {
@@ -97,4 +100,10 @@ pub fn test_four_b() {
 pub fn test_five_a() {
     assert_eq!(solve_a("./inputs/aoc2022/5_test.txt"), String::from("CMZ"));
     assert_eq!(solve_a("./inputs/aoc2022/5.txt"), String::from("VGBBJCRMN"));
+}
+
+#[test]
+pub fn test_five_b() {
+    assert_eq!(solve_b("./inputs/aoc2022/5_test.txt"), String::from("MCD"));
+    assert_eq!(solve_b("./inputs/aoc2022/5.txt"), String::from("LBBVJBRMH"));
 }

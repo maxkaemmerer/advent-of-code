@@ -17,7 +17,15 @@ struct CargoMove {
     target: usize,
 }
 
-pub fn solve_a<'a>(path: &str) -> String {
+pub fn solve_a(path: &str) -> String {
+    solve_with_stacking_order(path, false)
+}
+
+pub fn solve_b(path: &str) -> String {
+    solve_with_stacking_order(path, true)
+}
+
+fn solve_with_stacking_order(path: &str, preserve_stacking_order: bool) -> String {
     let lines = file_to_lines(path);
 
     let mut split_definitions = lines.split(String::is_empty);
@@ -78,9 +86,11 @@ pub fn solve_a<'a>(path: &str) -> String {
         })
         .collect();
 
+    print_layout(&layout);
+
     moves
         .iter()
-        .for_each(|cargo_move| move_cargo(&mut layout, cargo_move));
+        .for_each(|cargo_move| move_cargo(&mut layout, cargo_move, preserve_stacking_order));
 
     print_layout(&layout);
 
@@ -92,22 +102,43 @@ pub fn solve_a<'a>(path: &str) -> String {
     String::from_iter(top_cargo.iter().filter(|c| !c.is_whitespace()))
 }
 
-fn take_top_cargo(layout: &mut Layout, stack: usize) -> char {
-    layout[stack]
-        .pop()
-        .expect("malformed input, tried to move nonexistent cargo")
+fn take_x_cargo(
+    layout: &mut Layout,
+    stack: usize,
+    amount: usize,
+    preserve_stacking_order: bool,
+) -> Vec<char> {
+    let mut removed_cargo: Vec<char> = (0..amount)
+        .map(|index| {
+            println!("{:?} {index}", layout[stack]);
+            layout[stack]
+                .pop()
+                .expect("malformed input, tried to move nonexistent cargo")
+        })
+        .collect();
+
+    if preserve_stacking_order {
+        removed_cargo.reverse();
+    }
+
+    removed_cargo
 }
 
-fn place_cargo(layout: &mut Layout, stack: usize, cargo: char) {
-    layout[stack].push(cargo)
-}
-
-fn move_cargo(layout: &mut Layout, cargo_move: &CargoMove) {
-    println!("Move {:?}", cargo_move);
-    (0..cargo_move.amount).for_each(|_| {
-        let taken_cargo = take_top_cargo(layout, cargo_move.source);
-        place_cargo(layout, cargo_move.target, taken_cargo);
+fn place_cargo(layout: &mut Layout, stack: usize, cargo: Vec<char>) {
+    cargo.iter().for_each(|piece_of_cargo| {
+        layout[stack].push(piece_of_cargo.clone());
     });
+}
+
+fn move_cargo(layout: &mut Layout, cargo_move: &CargoMove, preserve_stacking_order: bool) {
+    println!("Move {:?}", cargo_move);
+    let taken_cargo = take_x_cargo(
+        layout,
+        cargo_move.source,
+        cargo_move.amount,
+        preserve_stacking_order,
+    );
+    place_cargo(layout, cargo_move.target, taken_cargo);
 
     print_layout(layout);
 }
