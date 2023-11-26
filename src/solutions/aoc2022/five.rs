@@ -28,6 +28,28 @@ pub fn solve_a<'a>(path: &str) -> String {
         .to_owned();
 
     raw_layout.reverse();
+    let mut layout_iterator = raw_layout.iter();
+
+    let stacks = layout_iterator
+        .next()
+        .expect("input is malformed. could not parse stack indicators");
+
+    let number_of_stacks = stacks.chars().filter(|c| !c.is_whitespace()).count();
+
+    println!("Number of Stack {}", number_of_stacks);
+
+    let mut layout: Layout = (0..number_of_stacks).map(|_| vec![]).collect();
+    layout_iterator.for_each(|layout_line| {
+        let cargo = line_to_cargo(layout_line, number_of_stacks);
+        cargo
+            .iter()
+            .enumerate()
+            .for_each(|(stack_index, cargo_box)| {
+                if let Some(existing_box) = cargo_box {
+                    layout[stack_index].push(existing_box.clone());
+                }
+            });
+    });
 
     let moves: Vec<CargoMove> = split_definitions
         .next()
@@ -55,29 +77,6 @@ pub fn solve_a<'a>(path: &str) -> String {
             panic!("input is malformed cant parge line '{}' to move", line);
         })
         .collect();
-
-    let mut layour_it = raw_layout.iter();
-
-    let stacks = layour_it
-        .next()
-        .expect("input is malformed. could not parse stack indicators");
-
-    let number_of_stacks = stacks.chars().filter(|c| !c.is_whitespace()).count();
-
-    println!("Number of Stack {}", number_of_stacks);
-
-    let mut layout: Layout = (0..number_of_stacks).map(|_| vec![]).collect();
-    layour_it.for_each(|layout_line| {
-        let cargo = line_to_cargo(layout_line, number_of_stacks);
-        cargo
-            .iter()
-            .enumerate()
-            .for_each(|(stack_index, cargo_box)| {
-                if let Some(existing_box) = cargo_box {
-                    layout[stack_index].push(existing_box.clone());
-                }
-            });
-    });
 
     moves
         .iter()
