@@ -64,17 +64,18 @@ fn solve_with_stacking_order(path: &str, preserve_stacking_order: bool) -> Strin
         .expect("input is malformed. could not parse moves")
         .iter()
         .map(|line| {
-            let mut parts = line.split_whitespace();
-            let _ = parts.next();
-            let op_amount = parts.next().and_then(|c| c.parse::<usize>().ok());
-            let _ = parts.next();
-            let op_source = parts.next().and_then(|c| c.parse::<usize>().ok());
-            let _ = parts.next();
-            let op_destination = parts.next().and_then(|c| c.parse::<usize>().ok());
+            let parts: Vec<&str> = line.split_whitespace().collect();
 
-            if let (Some(amount), Some(source), Some(target)) =
-                (op_amount, op_source, op_destination)
-            {
+            let res = match parts[..] {
+                ["move", amount, "from", source, "to", target] => (
+                    amount.parse::<usize>().ok(),
+                    source.parse::<usize>().ok(),
+                    target.parse::<usize>().ok(),
+                ),
+                _ => panic!("malformed input, could not parse move"),
+            };
+
+            if let (Some(amount), Some(source), Some(target)) = res {
                 return CargoMove {
                     amount,
                     source: source - 1,
