@@ -14,7 +14,6 @@ fn solve(path: &str, convert_string_numbers: bool) -> usize {
                 [one] => one * 10 + one,
                 _ => panic!("Invalid input, line does not contain numbers"),
             };
-            println!("{:?} becomes {:?}", nums, res);
             res
         })
         .sum();
@@ -46,20 +45,14 @@ fn occurrences_in_string(valid: &Valid, string: &str, include_string_numbers: bo
 
 fn find_all_in_string(needle: String, haystack: String) -> Vec<usize> {
     let mut indices = vec![];
-    let mut search_string = haystack;
-    let mut previous_find = 0;
-    loop {
-        let res2 = search_string.find(needle.as_str());
-        if let Some(found) = res2 {
-            let index_from = found + 1;
-            previous_find = previous_find + index_from;
-            indices.push(previous_find.clone());
-            println!(
-                "Found {needle} at {previous_find} in {}",
-                search_string.clone()
-            );
+    let mut previous_index = 0;
 
-            search_string = search_string[index_from..].to_string();
+    loop {
+        let find_result = haystack[previous_index..].find(needle.as_str());
+        if let Some(found) = find_result {
+            let index_from = found + 1;
+            previous_index = previous_index + index_from;
+            indices.push(previous_index.clone());
         } else {
             break;
         }
@@ -95,8 +88,6 @@ fn numbers_in_string(string: &str, include_string_numbers: bool) -> Vec<usize> {
 
     let numbers = found_digits.iter().map(|digit| digit.1).collect();
 
-    println!("{string} to {:?}", numbers);
-
     numbers
 }
 
@@ -105,7 +96,7 @@ mod tests {
     use crate::solutions::aoc2023::one::numbers_in_string;
 
     #[test]
-    pub fn should_get_overlappinng_numbers() {
+    pub fn should_get_overlapping_numbers() {
         assert_eq!(vec![6, 1, 8], numbers_in_string("6oneight", true));
         assert_eq!(vec![6], numbers_in_string("6oneight", false));
         assert_eq!(vec![7, 8, 7], numbers_in_string("a7e8e7g", true));
