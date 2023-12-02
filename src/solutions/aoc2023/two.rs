@@ -18,7 +18,7 @@ struct Game<'a> {
     sets: Vec<Set<'a>>,
 }
 
-type Set<'a> = Vec<Token<'a>>;
+type Set<'a> = Vec<Token<'a, usize>>;
 
 fn parse_game(line: &str) -> Game {
     let sets = line
@@ -40,18 +40,15 @@ fn parse_game(line: &str) -> Game {
         })
         .collect();
 
-    let id = parse_token(line, "Game", " ", ':')
-        .and_then(|token| token.1.parse::<usize>().ok())
-        .expect("Missing game id");
+    let id: Token<usize> = parse_token(line, "Game", " ", ':').expect("Missing game id");
 
-    Game { id, sets }
+    Game { id: id.1, sets }
 }
 
 fn is_valid_set_for_color(set: &Set, token_type: &str, limit: usize) -> Option<bool> {
     set.iter()
         .find(|a| a.to_owned().0 == token_type)
-        .and_then(|token| token.1.parse::<usize>().ok())
-        .map(|count| count <= limit)
+        .map(|count| count.1 <= limit)
 }
 
 fn is_valid_set(set: &Set, limits: &Limits) -> bool {
@@ -99,12 +96,7 @@ fn min_token_count_of_set(game: &Game, token_type: &str) -> usize {
         .map(|set| {
             set.iter()
                 .filter(|token| token.0 == token_type)
-                .map(|token| {
-                    token
-                        .1
-                        .parse::<usize>()
-                        .expect("token value was not a number")
-                })
+                .map(|token| token.1)
                 .max()
                 .unwrap_or_default()
         })
