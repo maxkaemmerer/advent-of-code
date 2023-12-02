@@ -3,10 +3,10 @@ use std::str::FromStr;
 pub type Token<'a, T> = (&'a str, T);
 
 pub fn parse_token_value_after<'a, T: FromStr>(
-    string: &'a str,
+    string: &str,
     token_name: &'a str,
-    delimiter_before_value: &'a str,
-    delimiter_after_value: &'a str,
+    delimiter_before_value: &str,
+    delimiter_after_value: &str,
 ) -> Option<Token<'a, T>> {
     let mut search_string = token_name.to_owned();
     search_string.push_str(delimiter_before_value);
@@ -26,10 +26,10 @@ pub fn parse_token_value_after<'a, T: FromStr>(
 }
 
 pub fn parse_token_value_before<'a, T: FromStr>(
-    string: &'a str,
+    string: &str,
     token_name: &'a str,
-    delimiter_before_value: &'a str,
-    delimiter_after_value: &'a str,
+    delimiter_before_value: &str,
+    delimiter_after_value: &str,
 ) -> Option<Token<'a, T>> {
     let mut search_string = delimiter_after_value.to_string().to_owned();
     search_string.push_str(token_name);
