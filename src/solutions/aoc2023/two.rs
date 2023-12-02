@@ -13,12 +13,15 @@ const A_LIMITS: Limits = Limits {
     red: 12,
 };
 
-type Game<'a> = (usize, Vec<Set<'a>>);
+struct Game<'a> {
+    id: usize,
+    sets: Vec<Set<'a>>,
+}
 
 type Set<'a> = Vec<Token<'a>>;
 
-fn parse_game<'a>(line: &'a str) -> Game {
-    let tokens = line
+fn parse_game(line: &str) -> Game {
+    let sets = line
         .split(';')
         .map(|set| {
             let mut tokens = vec![];
@@ -41,7 +44,7 @@ fn parse_game<'a>(line: &'a str) -> Game {
         .and_then(|token| token.1.parse::<usize>().ok())
         .expect("Missing game id");
 
-    (id, tokens)
+    Game { id, sets }
 }
 
 fn is_valid_set_for_color(set: &Set, token_type: &str, limit: usize) -> Option<bool> {
@@ -78,70 +81,41 @@ pub fn solve_a(path: &str) -> usize {
         .iter()
         .map(|line| parse_game(line))
         .filter(|game| is_valid_game(game, A_LIMITS))
-        .map(|game| game.0)
+        .map(|game| game.id)
         .sum()
 }
 
 fn is_valid_game(game: &Game, limits: Limits) -> bool {
-    game.1
+    game.sets
         .iter()
         .filter(|set| is_valid_set(set, &limits))
         .count()
-        == game.1.len()
+        == game.sets.len()
+}
+
+fn min_token_count_of_set(game: &Game, token_type: &str) -> usize {
+    game.sets
+        .iter()
+        .map(|set| {
+            set.iter()
+                .filter(|token| token.0 == token_type)
+                .map(|token| {
+                    token
+                        .1
+                        .parse::<usize>()
+                        .expect("token value was not a number")
+                })
+                .max()
+                .unwrap_or_default()
+        })
+        .max()
+        .unwrap_or_default()
 }
 
 fn power_of_game(game: Game) -> usize {
-    let min_red: usize = game
-        .1
-        .iter()
-        .map(|set| {
-            set.iter()
-                .filter(|token| token.0 == "red")
-                .map(|token| {
-                    token
-                        .1
-                        .parse::<usize>()
-                        .expect("token value was not a number")
-                })
-                .max()
-                .unwrap_or_default()
-        })
-        .max()
-        .unwrap_or_default();
-    let min_green: usize = game
-        .1
-        .iter()
-        .map(|set| {
-            set.iter()
-                .filter(|token| token.0 == "green")
-                .map(|token| {
-                    token
-                        .1
-                        .parse::<usize>()
-                        .expect("token value was not a number")
-                })
-                .max()
-                .unwrap_or_default()
-        })
-        .max()
-        .unwrap_or_default();
-    let min_blue: usize = game
-        .1
-        .iter()
-        .map(|set| {
-            set.iter()
-                .filter(|token| token.0 == "blue")
-                .map(|token| {
-                    token
-                        .1
-                        .parse::<usize>()
-                        .expect("token value was not a number")
-                })
-                .max()
-                .unwrap_or_default()
-        })
-        .max()
-        .unwrap_or_default();
+    let min_red: usize = min_token_count_of_set(&game, "red");
+    let min_green: usize = min_token_count_of_set(&game, "green");
+    let min_blue: usize = min_token_count_of_set(&game, "blue");
 
     min_red * min_green * min_blue
 }
