@@ -1,5 +1,5 @@
 use crate::common::file_to_lines;
-use crate::tokens::{parse_token, parse_token_before, Token};
+use crate::tokens::{parse_token_value_after, parse_token_value_before, Token};
 
 struct Limits {
     green: usize,
@@ -26,13 +26,13 @@ fn parse_game(line: &str) -> Game {
         .map(|set| {
             let mut tokens = vec![];
 
-            if let Some(green) = parse_token_before(set, "green", " ", ' ') {
+            if let Some(green) = parse_token_value_before(set, "green", " ", " ") {
                 tokens.push(green);
             }
-            if let Some(red) = parse_token_before(set, "red", " ", ' ') {
+            if let Some(red) = parse_token_value_before(set, "red", " ", " ") {
                 tokens.push(red);
             }
-            if let Some(blue) = parse_token_before(set, "blue", " ", ' ') {
+            if let Some(blue) = parse_token_value_before(set, "blue", " ", " ") {
                 tokens.push(blue);
             }
 
@@ -40,7 +40,8 @@ fn parse_game(line: &str) -> Game {
         })
         .collect();
 
-    let id: Token<usize> = parse_token(line, "Game", " ", ':').expect("Missing game id");
+    let id: Token<usize> =
+        parse_token_value_after(line, "Game", " ", ":").expect("Missing game id");
 
     Game { id: id.1, sets }
 }
