@@ -23,3 +23,16 @@ pub fn test_one_b() {
         aoc2023_rust::solutions::aoc2023::one::solve_b("./inputs/aoc2023/1.txt")
     );
 }
+
+#[test]
+pub fn test_two_a() {
+    assert_eq!(
+        8,
+        aoc2023_rust::solutions::aoc2023::two::solve_a("./inputs/aoc2023/2_test.txt")
+    );
+
+    assert_eq!(
+        1,
+        aoc2023_rust::solutions::aoc2023::two::solve_a("./inputs/aoc2023/2.txt")
+    );
+}
