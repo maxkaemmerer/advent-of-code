@@ -62,3 +62,15 @@ pub fn test_three_a() {
         aoc2023_rust::solutions::aoc2023::three::solve_a("./inputs/aoc2023/3.txt")
     );
 }
+#[test]
+pub fn test_three_b() {
+    assert_eq!(
+        467835,
+        aoc2023_rust::solutions::aoc2023::three::solve_b("./inputs/aoc2023/3_test.txt")
+    );
+
+    assert_eq!(
+        80179647,
+        aoc2023_rust::solutions::aoc2023::three::solve_b("./inputs/aoc2023/3.txt")
+    );
+}
