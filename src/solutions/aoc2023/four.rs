@@ -1,6 +1,6 @@
 use crate::common;
 use crate::common::file_to_lines;
-use crate::tokens::{parse_token_value_after, Token};
+use crate::tokens::{parse_token_value_after};
 use std::collections::{HashMap, HashSet};
 
 #[derive(Debug)]
@@ -41,13 +41,14 @@ fn calculate_cards(lines: Vec<&str>) -> HashMap<usize, Card> {
         .iter()
         .map(|line| {
             let card_index = line.find(':').expect("Invalid input, must include :") + 1;
-            let id_token: Token<usize> = parse_token_value_after(
+            let card_id: usize = parse_token_value_after(
                 common::remove_multiple_whitespaces(line).as_str(),
                 "Card",
                 " ",
                 ":",
             )
-            .expect("Invalid input must include card id");
+            .expect("Invalid input must include card id")
+            .1;
             let scores = &line[card_index..];
 
             let split_scores: Vec<&str> = scores.split("|").collect();
@@ -57,10 +58,10 @@ fn calculate_cards(lines: Vec<&str>) -> HashMap<usize, Card> {
 
                 let intersections = winning_scores.intersection(&player_scores);
                 (
-                    id_token.1,
+                    card_id,
                     Card {
-                        id: id_token.1,
-                        cards_to_process: (id_token.1 + 1..id_token.1 + 1 + intersections.count())
+                        id: card_id,
+                        cards_to_process: (card_id + 1..card_id + 1 + intersections.count())
                             .collect(),
                     },
                 )
