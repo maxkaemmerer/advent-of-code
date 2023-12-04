@@ -11,3 +11,12 @@ pub fn file_to_lines(path: &str) -> Vec<String> {
 
     return lines;
 }
+
+pub fn remove_multiple_whitespaces(string: &str) -> String {
+    let mut new_string = string.to_string();
+    while new_string.contains("  ") {
+        new_string = new_string.replace("  ", " ");
+    }
+
+    new_string
+}

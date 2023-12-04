@@ -74,3 +74,39 @@ pub fn test_three_b() {
         aoc2023_rust::solutions::aoc2023::three::solve_b("./inputs/aoc2023/3.txt")
     );
 }
+
+#[test]
+pub fn test_four_a() {
+    assert_eq!(
+        13,
+        aoc2023_rust::solutions::aoc2023::four::solve_a("./inputs/aoc2023/4_test.txt")
+    );
+
+    assert_eq!(
+        25010,
+        aoc2023_rust::solutions::aoc2023::four::solve_a("./inputs/aoc2023/4.txt")
+    );
+
+    assert_eq!(
+        13,
+        aoc2023_rust::solutions::aoc2023::four::solve_a("./inputs/aoc2023/4_test.txt")
+    );
+
+    assert_eq!(
+        25010,
+        aoc2023_rust::solutions::aoc2023::four::solve_a("./inputs/aoc2023/4.txt")
+    );
+}
+
+#[test]
+pub fn test_four_b() {
+    assert_eq!(
+        30,
+        aoc2023_rust::solutions::aoc2023::four::solve_b("./inputs/aoc2023/4_test.txt")
+    );
+
+    assert_eq!(
+        9924412,
+        aoc2023_rust::solutions::aoc2023::four::solve_b("./inputs/aoc2023/4.txt")
+    );
+}

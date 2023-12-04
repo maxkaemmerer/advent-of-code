@@ -135,7 +135,7 @@ fn find_occurrences_on_line_by_comparison(
         return HashSet::from_iter(
             line.chars()
                 .enumerate()
-                .filter(|(index, char)| comparison(char))
+                .filter(|(_, char)| comparison(char))
                 .map(|(index, _)| index),
         );
     }

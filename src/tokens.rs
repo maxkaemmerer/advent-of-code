@@ -77,6 +77,15 @@ mod tests {
                 ":"
             )
         );
+        assert_eq!(
+            Some(("Card", 1)),
+            parse_token_value_after(
+                "Card 1: 41 48 83 86 17 | 83 86  6 31 17  9 48 53",
+                "Card",
+                " ",
+                ":"
+            )
+        );
     }
     #[test]
     pub fn should_parse_before() {
