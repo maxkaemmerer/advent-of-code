@@ -110,3 +110,16 @@ pub fn test_four_b() {
         aoc::solutions::aoc2023::four::solve_b("./inputs/aoc2023/4.txt")
     );
 }
+
+#[test]
+pub fn test_five_a() {
+    assert_eq!(
+        35,
+        aoc::solutions::aoc2023::five::solve_a("./inputs/aoc2023/5_test.txt")
+    );
+
+    // assert_eq!(
+    //     0,
+    //     aoc::solutions::aoc2023::five::solve_a("./inputs/aoc2023/5.txt")
+    // );
+}
