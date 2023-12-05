@@ -35,13 +35,12 @@ pub fn parse_token_value_before<'a, T: FromStr>(
     search_string.push_str(token_name);
     let index = string.find(search_string.as_str());
     if let Some(found_index) = index {
-        let split_before = string
-            .split_at(found_index)
-            .0;
+        let split_before = string.split_at(found_index).0;
         let last_value = if delimiter_before_value.is_empty() {
             split_before.parse::<T>().ok()
         } else {
-            split_before.split(delimiter_before_value)
+            split_before
+                .split(delimiter_before_value)
                 .last()
                 .and_then(|value| value.parse::<T>().ok())
         };

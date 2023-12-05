@@ -1,6 +1,6 @@
 use crate::common;
 use crate::common::file_to_lines;
-use crate::tokens::{parse_token_value_after};
+use crate::tokens::parse_token_value_after;
 use std::collections::{HashMap, HashSet};
 
 #[derive(Debug)]

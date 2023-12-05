@@ -118,8 +118,8 @@ pub fn test_five_a() {
         aoc::solutions::aoc2023::five::solve_a("./inputs/aoc2023/5_test.txt")
     );
 
-    // assert_eq!(
-    //     0,
-    //     aoc::solutions::aoc2023::five::solve_a("./inputs/aoc2023/5.txt")
-    // );
+    assert_eq!(
+        1181555926,
+        aoc::solutions::aoc2023::five::solve_a("./inputs/aoc2023/5.txt")
+    );
 }

@@ -1,6 +1,6 @@
-use std::ops::Range;
 use crate::common::file_to_lines;
 use crate::tokens::{parse_token_value_before, Token};
+use std::ops::Range;
 
 #[derive(Debug)]
 struct RangeMapping {
@@ -20,27 +20,39 @@ impl RangeMapping {
 
 #[derive(Debug)]
 struct Mapper {
-    name: String,
+    _name: String,
     range_mappings: Vec<RangeMapping>,
     decorated_mapper: Option<Box<Mapper>>,
 }
 
 impl Mapper {
-
     fn from_lines_and_next(name: String, lines: Vec<String>, next: Option<Box<Mapper>>) -> Self {
-        let range_mappings: Vec<RangeMapping> = lines.iter().map(|line| {
-            let data_points: Vec<usize> = line.split_whitespace().map(|data_point| data_point.parse::<usize>().expect("invalid input, map data point is not a number")).collect();
-            if let [destination_start, source_start, length] = data_points[..] {
-                let source_range = source_start..source_start + length;
-                let destination_range = destination_start..destination_start + length;
+        let range_mappings: Vec<RangeMapping> = lines
+            .iter()
+            .map(|line| {
+                let data_points: Vec<usize> = line
+                    .split_whitespace()
+                    .map(|data_point| {
+                        data_point
+                            .parse::<usize>()
+                            .expect("invalid input, map data point is not a number")
+                    })
+                    .collect();
+                if let [destination_start, source_start, length] = data_points[..] {
+                    let source_range = source_start..source_start + length;
+                    let destination_range = destination_start..destination_start + length;
 
-                return RangeMapping { source_range, destination_range };
-            } else {
-                panic!("Invalid input, mapping row does not consist of three numbers");
-            }
-        }).collect();
+                    return RangeMapping {
+                        source_range,
+                        destination_range,
+                    };
+                } else {
+                    panic!("Invalid input, mapping row does not consist of three numbers");
+                }
+            })
+            .collect();
         Mapper {
-            name,
+            _name: name,
             range_mappings,
             decorated_mapper: next,
         }
@@ -52,42 +64,66 @@ impl Mapper {
         for range_mapping in self.range_mappings.iter() {
             if let Some(matched_value) = range_mapping.source_to_destination(key) {
                 mapped_value = Some(matched_value);
-                break
+                break;
             }
         }
 
         let mapped_value = mapped_value.unwrap_or(key);
 
-        self.decorated_mapper.as_ref().map(|map| map.find_corresponding_value(mapped_value)).unwrap_or(mapped_value)
+        self.decorated_mapper
+            .as_ref()
+            .map(|map| map.find_corresponding_value(mapped_value))
+            .unwrap_or(mapped_value)
     }
 }
 
 pub fn solve_a(path: &str) -> usize {
     let lines = file_to_lines(path);
 
-    let seed_line = lines.iter().take(1).last().expect("invalid input, does not have a single line");
-    let seeds: Vec<usize> = seed_line.replace("seeds: ", "").split_whitespace().map(|seed| seed.parse::<usize>().expect("Invalid seed, should be number")).collect();
+    let seed_line = lines
+        .iter()
+        .take(1)
+        .last()
+        .expect("invalid input, does not have a single line");
+    let seeds: Vec<usize> = seed_line
+        .replace("seeds: ", "")
+        .split_whitespace()
+        .map(|seed| {
+            seed.parse::<usize>()
+                .expect("Invalid seed, should be number")
+        })
+        .collect();
 
     let remaining: Vec<String> = lines.iter().skip(1).map(|line| line.clone()).collect();
     let mut maps = chunks_by(remaining, "".to_string());
     maps.reverse();
-    let first_map: Box<Mapper> = maps.iter().fold(None, |previous, map| {
-        if let [heading, data @ ..] = &map[..] {
-            let name: Token<String> = parse_token_value_before(heading, "map", "", " ").expect("missing heading for map");
-            return Some(Box::new(Mapper::from_lines_and_next(
-                name.1,
-                data.to_owned().iter().map(|line| String::from(line.as_str())).collect(),
-                previous,
-            )));
-        }
+    let first_map: Box<Mapper> = maps
+        .iter()
+        .fold(None, |previous, map| {
+            if let [heading, data @ ..] = &map[..] {
+                let name: Token<String> = parse_token_value_before(heading, "map", "", " ")
+                    .expect("missing heading for map");
+                return Some(Box::new(Mapper::from_lines_and_next(
+                    name.1,
+                    data.to_owned()
+                        .iter()
+                        .map(|line| String::from(line.as_str()))
+                        .collect(),
+                    previous,
+                )));
+            }
 
-        panic!("Invalid map, insufficient lines given");
-    }).expect("Invalid input, should have at least one map");
+            panic!("Invalid map, insufficient lines given");
+        })
+        .expect("Invalid input, should have at least one map");
 
     println!("{:?}", first_map);
 
-
-    seeds.iter().map(|seed| first_map.find_corresponding_value(seed.clone())).min().expect("Invalid input, should have at least one seed")
+    seeds
+        .iter()
+        .map(|seed| first_map.find_corresponding_value(seed.clone()))
+        .min()
+        .expect("Invalid input, should have at least one seed")
 }
 
 fn chunks_by(vec: Vec<String>, delimiter: String) -> Vec<Vec<String>> {
@@ -100,7 +136,6 @@ fn chunks_by(vec: Vec<String>, delimiter: String) -> Vec<Vec<String>> {
                 result.push(chunk.clone());
                 chunk = vec![];
             }
-
         } else {
             chunk.push(item.clone());
         }
