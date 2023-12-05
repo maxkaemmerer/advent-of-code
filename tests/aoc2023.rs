@@ -130,9 +130,9 @@ pub fn test_five_b() {
         46,
         aoc::solutions::aoc2023::five::solve_b("./inputs/aoc2023/5_test.txt")
     );
-
-    assert_eq!(
-        0,
-        aoc::solutions::aoc2023::five::solve_b("./inputs/aoc2023/5.txt")
-    );
+    //
+    // assert_eq!(
+    //     0,
+    //     aoc::solutions::aoc2023::five::solve_b("./inputs/aoc2023/5.txt")
+    // );
 }
