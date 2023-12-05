@@ -1,36 +1,62 @@
-use std::collections::HashMap;
+use std::ops::Range;
 use crate::common::file_to_lines;
 use crate::tokens::{parse_token_value_before, Token};
 
 #[derive(Debug)]
+struct RangeMapping {
+    source_range: Range<usize>,
+    destination_range: Range<usize>,
+}
+
+impl RangeMapping {
+    fn source_to_destination(&self, key: usize) -> Option<usize> {
+        if self.source_range.contains(&key) {
+            return Some(self.destination_range.start + (key - self.source_range.start));
+        }
+
+        None
+    }
+}
+
+#[derive(Debug)]
 struct Mapper {
     name: String,
-    map: HashMap<usize, usize>,
+    range_mappings: Vec<RangeMapping>,
     decorated_mapper: Option<Box<Mapper>>,
 }
 
 impl Mapper {
+
     fn from_lines_and_next(name: String, lines: Vec<String>, next: Option<Box<Mapper>>) -> Self {
-        let map: HashMap<usize, usize> = lines.iter().map(|line| {
-            let x: Vec<usize> = line.split_whitespace().map(|data_point| data_point.parse::<usize>().expect("invalid input, map data point is not a number")).collect();
-            if let [destination_start, source_start, length] = x[..] {
+        let range_mappings: Vec<RangeMapping> = lines.iter().map(|line| {
+            let data_points: Vec<usize> = line.split_whitespace().map(|data_point| data_point.parse::<usize>().expect("invalid input, map data point is not a number")).collect();
+            if let [destination_start, source_start, length] = data_points[..] {
                 let source_range = source_start..source_start + length;
                 let destination_range = destination_start..destination_start + length;
 
-                return source_range.zip(destination_range);
+                return RangeMapping { source_range, destination_range };
             } else {
                 panic!("Invalid input, mapping row does not consist of three numbers");
             }
-        }).flatten().collect();
+        }).collect();
         Mapper {
             name,
-            map,
+            range_mappings,
             decorated_mapper: next,
         }
     }
 
     pub fn find_corresponding_value(&self, key: usize) -> usize {
-        let mapped_value = self.map.get(&key).unwrap_or(&key).clone();
+        let mut mapped_value = None;
+
+        for range_mapping in self.range_mappings.iter() {
+            if let Some(matched_value) = range_mapping.source_to_destination(key) {
+                mapped_value = Some(matched_value);
+                break
+            }
+        }
+
+        let mapped_value = mapped_value.unwrap_or(key);
 
         self.decorated_mapper.as_ref().map(|map| map.find_corresponding_value(mapped_value)).unwrap_or(mapped_value)
     }
@@ -42,9 +68,7 @@ pub fn solve_a(path: &str) -> usize {
     let seed_line = lines.iter().take(1).last().expect("invalid input, does not have a single line");
     let seeds: Vec<usize> = seed_line.replace("seeds: ", "").split_whitespace().map(|seed| seed.parse::<usize>().expect("Invalid seed, should be number")).collect();
 
-
     let remaining: Vec<String> = lines.iter().skip(1).map(|line| line.clone()).collect();
-
     let mut maps = chunks_by(remaining, "".to_string());
     maps.reverse();
     let first_map: Box<Mapper> = maps.iter().fold(None, |previous, map| {

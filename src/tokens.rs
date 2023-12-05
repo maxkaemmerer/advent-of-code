@@ -35,12 +35,17 @@ pub fn parse_token_value_before<'a, T: FromStr>(
     search_string.push_str(token_name);
     let index = string.find(search_string.as_str());
     if let Some(found_index) = index {
-        let last_value = string
+        let split_before = string
             .split_at(found_index)
-            .0
-            .split(delimiter_before_value)
-            .last()
-            .and_then(|value| value.parse::<T>().ok());
+            .0;
+        let last_value = if delimiter_before_value.is_empty() {
+            split_before.parse::<T>().ok()
+        } else {
+            split_before.split(delimiter_before_value)
+                .last()
+                .and_then(|value| value.parse::<T>().ok())
+        };
+
         return if let Some(value) = last_value {
             Some((token_name, value))
         } else {
@@ -96,6 +101,10 @@ mod tests {
         assert_eq!(
             Some(("red", 1)),
             parse_token_value_before("Game 100: 1 red, 2 green, 6 blue", "red", " ", " ")
+        );
+        assert_eq!(
+            Some(("map", "seed-to-soil".to_string())),
+            parse_token_value_before("seed-to-soil map:", "map", "", " ")
         );
         assert_eq!(
             Some(("blue", 6)),
