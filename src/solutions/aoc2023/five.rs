@@ -1,6 +1,6 @@
+use std::ops::Range;
 use crate::common::file_to_lines;
 use crate::tokens::{parse_token_value_before, Token};
-use std::ops::Range;
 
 #[derive(Debug)]
 struct RangeMapping {
@@ -77,26 +77,7 @@ impl Mapper {
     }
 }
 
-pub fn solve_a(path: &str) -> usize {
-    let lines = file_to_lines(path);
-
-    let seed_line = lines
-        .iter()
-        .take(1)
-        .last()
-        .expect("invalid input, does not have a single line");
-    let seeds: Vec<usize> = seed_line
-        .replace("seeds: ", "")
-        .split_whitespace()
-        .map(|seed| {
-            seed.parse::<usize>()
-                .expect("Invalid seed, should be number")
-        })
-        .collect();
-
-    let remaining: Vec<String> = lines.iter().skip(1).map(|line| line.clone()).collect();
-    let mut maps = chunks_by(remaining, "".to_string());
-    maps.reverse();
+pub fn solve_with_seeds_and_maps(seeds: Vec<Range<usize>>, maps: Vec<Vec<String>>) -> usize {
     let first_map: Box<Mapper> = maps
         .iter()
         .fold(None, |previous, map| {
@@ -119,11 +100,82 @@ pub fn solve_a(path: &str) -> usize {
 
     println!("{:?}", first_map);
 
-    seeds
+    let mut results = vec![];
+
+    seeds.iter().for_each(|seed_range| {
+        for seed in seed_range.start.clone()..seed_range.end.clone() {
+            results.push(first_map.find_corresponding_value(seed))
+        }
+    });
+
+    results.iter().min().unwrap_or(&0).clone()
+}
+
+pub fn solve_a<'a>(path: &str) -> usize {
+    let range_modified = 1usize;
+    let lines = file_to_lines(path);
+
+    let seed_line = lines
         .iter()
-        .map(|seed| first_map.find_corresponding_value(seed.clone()))
-        .min()
-        .expect("Invalid input, should have at least one seed")
+        .take(1)
+        .last()
+        .expect("invalid input, does not have a single line");
+    let seeds: Vec<usize> = seed_line
+        .replace("seeds: ", "")
+        .split_whitespace()
+        .map(|seed| {
+            seed.parse::<usize>()
+                .expect("Invalid seed, should be number")
+        })
+        .collect();
+
+    let seeds: Vec<Range<usize>> = seeds.iter()
+        .map(|seed| {
+            seed.clone()..(seed + &1)
+        })
+        .collect();
+
+    let maps = maps_from_lines(lines);
+
+    solve_with_seeds_and_maps(seeds, maps)
+}
+
+pub fn solve_b(path: &str) -> usize {
+    let lines = file_to_lines(path);
+
+    let seed_line = lines
+        .iter()
+        .take(1)
+        .last()
+        .expect("invalid input, does not have a single line");
+    let seed_definitions: Vec<usize> = seed_line
+        .replace("seeds: ", "")
+        .split_whitespace()
+        .map(|seed| {
+            seed.parse::<usize>()
+                .expect("Invalid seed, should be number")
+        })
+        .collect();
+
+    let seeds: Vec<Range<usize>> = seed_definitions.chunks(2).map(|chunk| {
+        if let [start, length] = chunk {
+            return (start.clone()..(start + length)).clone();
+        }
+
+        panic!("Invalid input. seed ranges do not match")
+    }).collect();
+
+
+    let maps = maps_from_lines(lines);
+
+    solve_with_seeds_and_maps(seeds, maps)
+}
+
+fn maps_from_lines(lines: Vec<String>) -> Vec<Vec<String>> {
+    let remaining: Vec<String> = lines.iter().skip(1).map(|line| line.clone()).collect();
+    let mut maps = chunks_by(remaining, "".to_string());
+    maps.reverse();
+    maps
 }
 
 fn chunks_by(vec: Vec<String>, delimiter: String) -> Vec<Vec<String>> {
